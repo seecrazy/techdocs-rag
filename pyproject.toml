@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "techdocs-rag"
+version = "0.1.0"
+description = "多技术栈技术文档 RAG 问答系统(结构化切分 / 混合检索 / 强制溯源 / 路由隔离)"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pyyaml>=6.0",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "httpx>=0.27"]
+# 生产可选:向量库与重排模型
+prod = [
+    "chromadb>=0.5 ; python_version>='3.10'",
+    "sentence-transformers>=3.0",
+]
+
+[project.scripts]
+techdocs-rag = "techdocs_rag.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
