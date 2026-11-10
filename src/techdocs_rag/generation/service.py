@@ -155,8 +155,10 @@ class QAService:
             citations=citations,
             routing=trace["routing"],
             context_chunk_ids=trace["context_chunk_ids"],
+            context_source_ids=[c.metadata.source_id for c in context_chunks],
             warning=warning,
             trace_id=trace_id,
+            relevance=round(relevance, 4),
         )
 
     # -- 内部 -------------------------------------------------------------

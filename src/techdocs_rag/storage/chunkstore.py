@@ -26,7 +26,8 @@ CREATE INDEX IF NOT EXISTS idx_chunks_source ON chunks(collection, source_id);
 class SQLiteChunkStore:
     def __init__(self, path):
         os.makedirs(os.path.dirname(str(path)) or ".", exist_ok=True)
-        self.conn = sqlite3.connect(str(path))
+        # check_same_thread=False:FastAPI 线程池中访问;单进程开发规模下可接受
+        self.conn = sqlite3.connect(str(path), check_same_thread=False)
         self.conn.executescript(_SCHEMA)
         self.conn.commit()
 

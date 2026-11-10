@@ -124,8 +124,10 @@ class AnswerResult:
     citations: list = field(default_factory=list)
     routing: dict = field(default_factory=dict)
     context_chunk_ids: list = field(default_factory=list)
+    context_source_ids: list = field(default_factory=list)
     warning: str = ""
     trace_id: str = ""
+    relevance: float = 0.0
 
 
 @dataclass
