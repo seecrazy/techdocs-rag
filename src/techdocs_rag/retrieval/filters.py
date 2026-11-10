@@ -12,12 +12,16 @@ class RetrievalFilters:
     version: Optional[str] = None
     version_policy: str = "latest"  # latest | all
     doc_type_hint: Optional[str] = None
+    exclude_external_suspect: bool = False
 
 
 def build_filter(f: RetrievalFilters, family_latest: dict):
     """family_latest: family_key → 最新版本(DocStore.latest_family_versions())。"""
 
     def pred(m) -> bool:
+        # 注入处置:external + suspect 不入检索结果(设计 §8.1 过滤层)
+        if f.exclude_external_suspect and m.injection_suspect and m.authority_level == "external":
+            return False
         # 权限过滤必须发生在检索阶段,生成端不做二次判断(设计 §6.6)
         if m.permission_scope not in f.permissions:
             return False
