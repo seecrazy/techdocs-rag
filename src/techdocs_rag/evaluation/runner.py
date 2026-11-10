@@ -46,19 +46,24 @@ class EvalRunner:
                     "citation_accuracy": round(citation_accuracy(result.citations), 4),
                     "refused": result.refused,
                     "expected_refusal": bool(entry.get("should_refuse", False)),
+                    "has_relevant": bool(relevant),
                     "relevance": result.relevance,
                 }
             )
         n = len(per_query)
         answered = [r for r in per_query if not r["refused"]]
         refused = [r for r in per_query if r["refused"]]
-        mean = lambda key: (sum(r[key] for r in per_query) / n) if n else 0.0  # noqa: E731
+        routing_pairs = [
+            (r["pred_stacks"], r["expected_stacks"]) for r in per_query if r["expected_stacks"]
+        ]
+        knowledge = [r for r in per_query if r["has_relevant"]]  # 拒答用例不进检索指标
+        kmean = lambda key: (sum(r[key] for r in knowledge) / len(knowledge)) if knowledge else 0.0  # noqa: E731
         return {
             "n": n,
-            "routing_accuracy": round(routing_accuracy([(r["pred_stacks"], r["expected_stacks"]) for r in per_query]), 4),
-            "context_recall": round(mean("context_recall"), 4),
-            "context_precision": round(mean("context_precision"), 4),
-            "citation_accuracy": round(mean("citation_accuracy"), 4),
+            "routing_accuracy": round(routing_accuracy(routing_pairs), 4),
+            "context_recall": round(kmean("context_recall"), 4),
+            "context_precision": round(kmean("context_precision"), 4),
+            "citation_accuracy": round(kmean("citation_accuracy"), 4),
             "refusal_rate": round((len(refused) / n) if n else 0.0, 4),
             "refusal_correctness": round(
                 (sum(1 for r in per_query if r["refused"] == r["expected_refusal"]) / n) if n else 0.0, 4

@@ -18,12 +18,13 @@ def context_recall(retrieved: list, relevant: set) -> float:
 
 
 def context_precision(retrieved: list, relevant: set) -> float:
-    """排序感知精确率:相关命中处的 precision@i 均值(RAGAS 风格)。"""
+    """排序感知精确率:按来源去重后,相关命中处的 precision@rank 均值(RAGAS 风格)。"""
     rel = set(relevant)
     if not rel or not retrieved:
         return 0.0
+    unique = list(dict.fromkeys(retrieved))  # 同源多 chunk 只按首次出现计
     hits, contributions = 0, []
-    for rank, sid in enumerate(retrieved, 1):
+    for rank, sid in enumerate(unique, 1):
         if sid in rel:
             hits += 1
             contributions.append(hits / rank)

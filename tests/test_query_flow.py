@@ -82,6 +82,14 @@ class TestMultiTurn:
         assert not r2.refused
         assert "kafka/consumer.md" in r2.answer, "追问应改写并命中第一轮主题的文档"
 
+    def test_session_persisted_across_restart(self, qa):
+        s1 = qa()
+        s1.ask("Kafka 消费者组 session.timeout.ms 是什么", session_id="p1", permissions=PUB_INT)
+        s2 = qa()  # 同一数据目录新实例,模拟进程重启
+        r = s2.ask("那它的默认值是多少?", session_id="p1", permissions=PUB_INT)
+        assert not r.refused
+        assert "kafka/consumer.md" in r.answer
+
 
 class TestVersion:
     def test_default_latest(self, qa):

@@ -1,0 +1,36 @@
+# techdocs-rag 配置示例(所有字段均有默认值,本文件仅展示可覆盖项)
+# 用法: techdocs-rag --config config/config.example.yaml ... 或环境变量 TECHDOCS_CONFIG
+
+data_dir: .techdocs_data
+traces_dir: traces
+
+chunking:
+  guide:
+    max_tokens: 1024
+    parent_max_tokens: 1536
+    overlap: 100
+  api_reference:
+    max_tokens: 512
+    parent_max_tokens: 1024
+    overlap: 50
+  troubleshooting:
+    max_tokens: 512
+    parent_max_tokens: 1024
+    overlap: 0
+
+retrieval:
+  vector_top_k: 15
+  bm25_top_k: 15
+  rrf_k: 60
+  final_top_k: 5
+  max_context_tokens: 4000
+  version_policy: latest      # latest | all
+  expand_parent: true
+  fanout_top_k: 3
+
+refusal:
+  enabled: true
+  min_top_score: 0.30         # 初始值;上线前用 eval 子命令的建议阈值校准
+
+security:
+  injection_exclude_external: true

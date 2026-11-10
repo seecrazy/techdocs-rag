@@ -23,6 +23,7 @@ KEYWORD_RULES = {
         "kafka": 2, "consumer group": 3, "consumer": 1, "producer": 2, "partition": 2,
         "broker": 2, "offset": 2, "zookeeper": 2, "kraft": 2, "rebalance": 2,
         "消费者组": 3, "消费组": 3, "重平衡": 2, "消息队列": 2,
+        "session.timeout.ms": 2, "heartbeat.interval.ms": 2, "max.poll": 2,
     },
     "redis": {
         "redis": 2, "keyspace": 2, "sentinel": 2, "redisson": 2, "lettuce": 2,

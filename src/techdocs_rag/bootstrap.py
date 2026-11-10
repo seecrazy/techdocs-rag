@@ -80,6 +80,7 @@ def build_context(config_path=None, data_dir=None, env=None) -> Context:
         rewriter=QueryRewriter(llm=router_llm),
         config=cfg,
         trace_store=trace_store,
+        session_store=doc_store,
     )
     return Context(
         config=cfg,

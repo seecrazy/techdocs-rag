@@ -1,0 +1,10 @@
+{"query": "kafka consumer group rebalance 触发条件有哪些", "expected_stack": "kafka", "relevant_source_ids": ["kafka/consumer-groups.md"]}
+{"query": "session.timeout.ms 默认值是多少", "expected_stack": "kafka", "relevant_source_ids": ["kafka/consumer-groups.md"]}
+{"query": "kubectl 排查 CrashLoopBackOff", "expected_stack": "k8s", "relevant_source_ids": ["k8s/pod-lifecycle.md"]}
+{"query": "k8s 1.28 sidecar 容器怎么用", "expected_stack": "k8s", "version": "1.28", "relevant_source_ids": ["k8s/v1.28/sidecar-containers.md"]}
+{"query": "sidecar 容器怎么配置", "expected_stack": "k8s", "relevant_source_ids": ["k8s/v1.29/sidecar-containers.md"]}
+{"query": "redis RDB 与 AOF 持久化区别", "expected_stack": "redis", "relevant_source_ids": ["redis/persistence.md"]}
+{"query": "spring boot 连接 redis 超时怎么配置", "expected_stacks": ["spring", "redis"], "relevant_source_ids": ["spring/boot-deploy.md"]}
+{"query": "mysql 死锁怎么排查", "expected_stack": "database", "relevant_source_ids": ["database/mysql-deadlock.md"], "permissions": ["public", "internal"]}
+{"query": "consumer group 消费延迟 频繁 rebalance 怎么处理", "expected_stack": "kafka", "relevant_source_ids": ["tickets/kafka-rebalance-delay.md"], "permissions": ["public", "internal"]}
+{"query": "今天天气怎么样适合郊游吗", "should_refuse": true}

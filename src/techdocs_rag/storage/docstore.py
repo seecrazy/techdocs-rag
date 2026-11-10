@@ -30,6 +30,13 @@ CREATE TABLE IF NOT EXISTS sync_runs (
     failed INTEGER, quarantined INTEGER,
     details TEXT
 );
+CREATE TABLE IF NOT EXISTS session_turns (
+    session_id TEXT NOT NULL,
+    seq INTEGER NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    PRIMARY KEY (session_id, seq)
+);
 """
 
 
@@ -128,3 +135,24 @@ class DocStore:
             "SELECT * FROM sync_runs ORDER BY id DESC LIMIT ?", (limit,)
         ).fetchall()
         return [dict(r) for r in rows]
+
+    # -- 会话持久化(多轮改写跨进程/重启可用) ------------------------------
+
+    def append_turn(self, session_id: str, role: str, content: str) -> None:
+        row = self.conn.execute(
+            "SELECT COALESCE(MAX(seq), 0) + 1 FROM session_turns WHERE session_id=?",
+            (session_id,),
+        ).fetchone()
+        self.conn.execute(
+            "INSERT OR REPLACE INTO session_turns(session_id, seq, role, content) VALUES (?,?,?,?)",
+            (session_id, row[0], role, content[:500]),
+        )
+        self.conn.commit()
+
+    def load_session(self, session_id: str, limit: int = 6) -> list:
+        rows = self.conn.execute(
+            "SELECT role, content FROM session_turns WHERE session_id=?"
+            " ORDER BY seq DESC LIMIT ?",
+            (session_id, limit),
+        ).fetchall()
+        return [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]

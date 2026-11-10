@@ -37,6 +37,7 @@ class QAService:
         rewriter=None,
         config=None,
         trace_store=None,
+        session_store=None,
     ):
         self.index_store = index_store
         self.doc_store = doc_store
@@ -47,6 +48,7 @@ class QAService:
         self.rewriter = rewriter or QueryRewriter()
         self.config = config
         self.trace_store = trace_store
+        self.session_store = session_store  # 提供 load_session/append_turn 即持久化多轮
         self.sessions = {}
 
     def ask(
@@ -67,7 +69,7 @@ class QAService:
         }
 
         # 1. 查询预处理:多轮改写 + 双语术语扩展(设计 §5)
-        history = self.sessions.get(session_id, []) if session_id else []
+        history = self._history(session_id)
         rq = self.rewriter.rewrite(question, history)
         trace["rewritten"] = rq.text
         trace["rewrite_method"] = rq.method
@@ -180,11 +182,21 @@ class QAService:
             chunks.append(target)
         return chunks
 
+    def _history(self, session_id):
+        if not session_id:
+            return []
+        if self.session_store is not None:
+            return self.session_store.load_session(session_id, _MAX_HISTORY)
+        return self.sessions.get(session_id, [])
+
     def _remember(self, session_id: str, question: str, answer: str) -> None:
         turns = self.sessions.setdefault(session_id, [])
         turns.append({"role": "user", "content": question[:_MAX_TURN_CHARS]})
         turns.append({"role": "assistant", "content": answer[:_MAX_TURN_CHARS]})
         del turns[:-_MAX_HISTORY]
+        if self.session_store is not None:
+            self.session_store.append_turn(session_id, "user", question)
+            self.session_store.append_turn(session_id, "assistant", answer)
 
     @staticmethod
     def _now() -> str:

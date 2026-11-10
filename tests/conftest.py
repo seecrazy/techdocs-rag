@@ -146,6 +146,7 @@ def qa(tmp_path):
             rewriter=QueryRewriter(),
             config=cfg,
             trace_store=TraceStore(tmp_path / "traces"),
+            session_store=doc_store,
         )
         service.ingestion = pipeline
         service.docs_root = root
